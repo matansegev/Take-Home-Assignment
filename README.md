@@ -4,12 +4,18 @@ A command-line interface application that integrates with Jira for project manag
 
 ## Features
 
+### Core Features
 - **Setup**: Configure the app to connect to Jira using email and API token
 - **Get an Issue**: Retrieve and display a specific Jira issue with interactive project and issue selection
 - **Create an Issue**: Add a new Jira issue based on user input with interactive project selection
 - **Delete an Issue**: Delete an existing Jira issue with confirmation step
 - **Error Handling**: Comprehensive error handling with clear, user-friendly messages
 - **Interactive UI**: Menu-driven interface with clear prompts and feedback
+
+### Additional Features (Extras)
+- **Environment Variable Login**: Automatic login using credentials from `.env` file for seamless authentication
+- **Project Search & Selection**: Interactive project search functionality that allows users to search through available projects by name
+- **Enhanced Delete Functionality**: Improved delete operation with better user experience and confirmation steps
 
 ## Installation
 
@@ -109,9 +115,9 @@ The application includes comprehensive error handling for:
 ## AI Disclosure
 
 This project was developed with assistance from AI tools including:
-- Code generation and debugging
-- Documentation writing
-- Error handling implementation
+- Code generation and debugging (using Cursor)
+- Documentation writing (using Cursor)
+- Error handling implementation (using Cursor)
 - Understanding Jira API integration and authentication (collaborated with ChatGPT)
 
 
