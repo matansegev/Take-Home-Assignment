@@ -1,0 +1,17 @@
+{
+  "name": "jira-cli",
+  "version": "1.0.0",
+  "description": "A command-line application for interacting with Jira",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": ["jira", "cli", "project-management"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  }
+}
