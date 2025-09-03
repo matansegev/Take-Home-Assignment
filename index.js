@@ -11,9 +11,7 @@ let apiToken = '';
 // HELPER FUNCTIONS
 // ================================
 
-/**
- * Sets global credentials and auto-generates base URL
- */
+// Save login credentials and generate Jira URL automatically
 function setCredentials(jiraEmail, jiraToken) {
   email = jiraEmail;
   apiToken = jiraToken;
@@ -22,9 +20,7 @@ function setCredentials(jiraEmail, jiraToken) {
   baseURL = generateBaseURLFromEmail(jiraEmail);
 }
 
-/**
- * Generates Jira base URL from email domain
- */
+// Create Jira URL from email domain
 function generateBaseURLFromEmail(email) {
   if (!email || !email.includes('@')) {
     return ''; // No fallback - let user provide valid email
@@ -35,9 +31,7 @@ function generateBaseURLFromEmail(email) {
   return `https://${domain}.atlassian.net`;
 }
 
-/**
- * Formats Jira API errors into user-friendly messages
- */
+// Convert API errors to simple messages
 function formatJiraError(error) {
   if (error.response?.data?.errorMessages?.[0]) {
     return error.response.data.errorMessages[0];
@@ -56,9 +50,7 @@ function formatJiraError(error) {
   return 'Unknown error occurred';
 }
 
-/**
- * Converts plain text to Atlassian Document Format
- */
+// Format text for Jira description
 function formatDescriptionForJira(description) {
   if (!description || !description.trim()) {
     return null;
@@ -86,9 +78,7 @@ function formatDescriptionForJira(description) {
 // API FUNCTIONS
 // ================================
 
-/**
- * Generic function for making authenticated requests to Jira API
- */
+// Make API requests to Jira
 async function makeJiraRequest(path, options = {}) {
   const url = `${baseURL}/rest/api/3${path}`;
   const method = options.method || 'GET';
@@ -125,23 +115,17 @@ async function makeJiraRequest(path, options = {}) {
   }
 }
 
-/**
- * Gets current authenticated user info
- */
+// Get current user info
 async function getCurrentUser() {
   return await makeJiraRequest('/myself');
 }
 
-/**
- * Gets list of accessible projects
- */
+// Get list of projects
 async function getProjectsList() {
   return await makeJiraRequest('/project');
 }
 
-/**
- * Gets specific project details
- */
+// Get project details
 async function getProject(projectKey) {
   if (!projectKey || !projectKey.trim()) {
     return { success: false, error: 'Project key is required' };
@@ -150,9 +134,7 @@ async function getProject(projectKey) {
   return await makeJiraRequest(`/project/${projectKey.trim()}`);
 }
 
-/**
- * Gets list of issues for a project using JQL
- */
+// Get issues from project
 async function getIssuesList(projectKey, maxResults = 50) {
   if (!projectKey || !projectKey.trim()) {
     return { success: false, error: 'Project key is required' };
@@ -162,9 +144,7 @@ async function getIssuesList(projectKey, maxResults = 50) {
   return await makeJiraRequest(`/search?jql=${encodeURIComponent(jql)}&maxResults=${maxResults}`);
 }
 
-/**
- * Gets specific issue details
- */
+// Get issue details
 async function getIssue(issueKey) {
   if (!issueKey || !issueKey.trim()) {
     return { success: false, error: 'Issue key is required (e.g., BTS-1)' };
@@ -173,6 +153,7 @@ async function getIssue(issueKey) {
   return await makeJiraRequest(`/issue/${issueKey.trim()}`);
 }
 
+// Create new issue
 async function createIssue(projectKey, summary, description, issueType = 'Task') {
   if (!projectKey || !summary) {
     return { success: false, error: 'Project key and summary are required' };
@@ -206,6 +187,7 @@ async function createIssue(projectKey, summary, description, issueType = 'Task')
   return response;
 }
 
+// Delete issue
 async function deleteIssue(issueKey) {
   if (!issueKey) {
     return { success: false, error: 'Issue key is required (e.g., BTS-1)' };
@@ -224,6 +206,7 @@ async function deleteIssue(issueKey) {
 // Manu Functions
 // ================================
   
+// Show setup menu for credentials
 async function setupMenu(rl) {
     const question = (prompt) => new Promise(resolve => rl.question(prompt, resolve));
     
@@ -257,7 +240,8 @@ async function setupMenu(rl) {
     }
   }
   
-  function showWelcomeMessage() {
+  // Show welcome message with connection status
+function showWelcomeMessage() {
       if (email && apiToken) {
         console.log('\n✅ Jira CLI Tool - Ready to use!');
         console.log(`📧 Connected as: ${email}`);
@@ -268,7 +252,8 @@ async function setupMenu(rl) {
       }
   }
     
-  async function mainMenu(rl) {
+  // Show main menu with actions
+async function mainMenu(rl) {
       const question = (prompt) => new Promise(resolve => rl.question(prompt, resolve));
       
       while (true) {
@@ -305,7 +290,8 @@ async function setupMenu(rl) {
 // ================================
   
 
-  async function useEnvCredentials() {
+  // Load credentials from .env file
+async function useEnvCredentials() {
   // Load environment variables from .env file
   dotenv.config();
   
@@ -338,7 +324,8 @@ async function setupMenu(rl) {
   }
 }
   
-  async function enterCredentialsManually(rl) {
+  // Enter credentials manually
+async function enterCredentialsManually(rl) {
     const question = (prompt) => new Promise(resolve => rl.question(prompt, resolve));
     
     console.log('\n✏️  Manual Credentials Setup');
@@ -365,7 +352,8 @@ async function setupMenu(rl) {
   return false;
   }
 
-  async function checkCredentials() {
+  // Test if credentials work
+async function checkCredentials() {
   if (!email || !apiToken) {
     console.log('❌ Please setup credentials first');
     return false;
@@ -401,6 +389,7 @@ async function setupMenu(rl) {
 // Actions on Project
 // ================================
   
+// Let user choose a project
 async function selectProject(rl) {
   const question = (prompt) => new Promise(resolve => rl.question(prompt, resolve));
   
@@ -444,6 +433,7 @@ async function selectProject(rl) {
   }
 }
 
+// Let user choose an issue from project
 async function selectIssueFromProject(rl) {
   try {
     // Step 1: Select Project
@@ -468,6 +458,7 @@ async function selectIssueFromProject(rl) {
   }
 }
 
+// Choose and show an issue
 async function selectAndDisplayIssue(rl) {
   const selectedIssue = await selectIssueFromProject(rl);
   if (selectedIssue) {
@@ -475,6 +466,7 @@ async function selectAndDisplayIssue(rl) {
   }
 }
   
+// Let user pick an issue from list
 async function selectIssueFromList(rl, issues, projectKey) {
     const question = (prompt) => new Promise(resolve => rl.question(prompt, resolve));
     
@@ -501,6 +493,7 @@ async function selectIssueFromList(rl, issues, projectKey) {
     return issues[issueIndex];
 }
 
+// Show issue details
 async function displayIssue(issueKey) {
   try {
     console.log(`\n🔍 Fetching issue ${issueKey}...`);
@@ -523,6 +516,7 @@ async function displayIssue(issueKey) {
   }
 }
 
+// Create a new issue
 async function createNewIssue(rl) {
   const question = (prompt) => new Promise(resolve => rl.question(prompt, resolve));
   
@@ -556,6 +550,7 @@ async function createNewIssue(rl) {
   }
 }
 
+// Delete an issue
 async function deleteSelectedIssue(rl) {
   try {
     // Step 1-3: Select issue using shared function
@@ -596,6 +591,7 @@ async function deleteSelectedIssue(rl) {
 // MAIN FUNCTION
 // ================================
 
+// Start the application
 async function main() {
   const rl = readline.createInterface({
     input: process.stdin,
